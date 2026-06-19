@@ -4,8 +4,30 @@ from mcp.server.fastmcp import FastMCP
 from tools.geocode import get_coordinates
 from tools.traffic import get_route_traffic
 from tools.route_summary import route_by_address
+from tools.eta import estimate_eta
 
 mcp = FastMCP("Maps MCP")
+
+@mcp.tool()
+def route_by_address_tool(
+    origin_address: str,
+    destination_address: str
+):
+    return route_by_address(
+        origin_address,
+        destination_address
+    )
+
+
+@mcp.tool()
+def estimate_eta_tool(
+    origin_address: str,
+    destination_address: str
+):
+    return estimate_eta(
+        origin_address,
+        destination_address
+    )
 
 @mcp.tool()
 def route_by_address_tool(
