@@ -25,11 +25,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Create virtual environment and install dependencies
+      - name: Install dependencies
         run: |
-          python -m venv antenv
-          source antenv/bin/activate
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Upload artifact for deployment jobs
@@ -51,7 +49,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-app
-          path: mcp-servers/maps-mcp
+          path: .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -66,4 +64,4 @@ jobs:
         with:
           app-name: abhi-maps-mcp
           slot-name: Production
-          package: mcp-servers/maps-mcp
+          package: .
