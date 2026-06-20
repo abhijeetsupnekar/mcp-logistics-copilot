@@ -5,7 +5,31 @@ from tools.traffic import get_route_traffic
 from tools.route_summary import route_by_address
 from tools.eta import estimate_eta
 
-mcp = FastMCP("Maps MCP")
+
+
+
+from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.server import TransportSecuritySettings
+
+transport_security = TransportSecuritySettings(
+    allowed_hosts=[
+        "127.0.0.1:*",
+        "localhost:*",
+        "[::1]:*",
+        "abhi-maps-mcp.azurewebsites.net"
+    ],
+    allowed_origins=[
+        "http://127.0.0.1:*",
+        "http://localhost:*",
+        "http://[::1]:*",
+        "https://abhi-maps-mcp.azurewebsites.net"
+    ]
+)
+
+mcp = FastMCP(
+    "Maps MCP",
+    transport_security=transport_security
+)
 
 @mcp.tool()
 def estimate_eta_tool(
