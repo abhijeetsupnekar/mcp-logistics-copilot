@@ -9,48 +9,50 @@ workflow_dispatch:
 jobs:
 build:
 runs-on: ubuntu-latest
-permissions:
-contents: read
 
 ```
+defaults:
+  run:
+    working-directory: mcp-servers/weather-mcp
+
+permissions:
+  contents: read
+
 steps:
   - uses: actions/checkout@v4
 
   - name: Set up Python version
     uses: actions/setup-python@v5
     with:
-      python-version: '3.12'
+      python-version: '3.11'
 
-  - name: Create and Start virtual environment and Install dependencies
+  - name: Install dependencies
     run: |
-      cd mcp-servers/weather-mcp
-      python -m venv antenv
-      source antenv/bin/activate
-      pip install --upgrade pip
+      python -m pip install --upgrade pip
       pip install -r requirements.txt
 
   - name: Upload artifact for deployment jobs
     uses: actions/upload-artifact@v4
     with:
       name: python-app
-      path: |
-        mcp-servers/weather-mcp
-        !mcp-servers/weather-mcp/antenv/
+      path: mcp-servers/weather-mcp
 ```
 
 deploy:
 runs-on: ubuntu-latest
 needs: build
-permissions:
-id-token: write
-contents: read
 
 ```
+permissions:
+  id-token: write
+  contents: read
+
 steps:
   - name: Download artifact from build job
     uses: actions/download-artifact@v4
     with:
       name: python-app
+      path: .
 
   - name: Login to Azure
     uses: azure/login@v2
@@ -63,6 +65,7 @@ steps:
     id: deploy-to-webapp
     uses: azure/webapps-deploy@v3
     with:
-      app-name: 'abhi-weather-mcp'
-      slot-name: 'Production'
+      app-name: abhi-weather-mcp
+      slot-name: Production
+      package: .
 ```
