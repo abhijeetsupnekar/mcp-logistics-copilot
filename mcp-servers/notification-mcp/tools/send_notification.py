@@ -1,10 +1,12 @@
+from services.email_service import send_email
+
+
 def send_notification(
     recipient: str,
     message: str
 ):
-    return {
-        "status": "success",
-        "recipient": recipient,
-        "message": message,
-        "result": "Notification sent"
-    }
+    return send_email(
+        recipient=recipient,
+        subject="Logistics Copilot Notification",
+        message=message
+    )
