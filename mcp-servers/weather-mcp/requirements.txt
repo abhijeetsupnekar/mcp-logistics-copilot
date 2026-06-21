@@ -1,5 +1,4 @@
-mcp
-requests
-python-dotenv
-gunicorn
-uvicorn
+mcp==1.28.0
+requests==2.34.2
+python-dotenv==1.2.2
+uvicorn==0.49.0
