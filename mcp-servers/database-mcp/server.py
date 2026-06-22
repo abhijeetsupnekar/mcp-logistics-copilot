@@ -8,25 +8,11 @@ from tools.delayed_shipment_tools import (
     register_delayed_shipment_tools
 )
 from mcp.server.fastmcp import FastMCP
-from mcp.server.fastmcp.server import TransportSecuritySettings
+
 mcp = FastMCP(
     "Database MCP",
     host="0.0.0.0",
-    transport_security=TransportSecuritySettings(
-        enable_dns_rebinding_protection=True,
-        allowed_hosts=[
-            "127.0.0.1:*",
-            "localhost:*",
-            "[::1]:*",
-            "abhi-database-mcp.azurewebsites.net"
-        ],
-        allowed_origins=[
-            "http://127.0.0.1:*",
-            "http://localhost:*",
-            "http://[::1]:*",
-            "https://abhi-database-mcp.azurewebsites.net"
-        ]
-    )
+
 )
 
 register_tools(mcp)

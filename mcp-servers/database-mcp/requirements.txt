@@ -1,4 +1,4 @@
-mcp
+mcp==1.28.0
 uvicorn
 gunicorn
 sqlalchemy
