@@ -13,10 +13,6 @@ runs-on: ubuntu-latest
 permissions:
   contents: read
 
-defaults:
-  run:
-    working-directory: mcp-servers/logistics-mcp
-
 steps:
   - uses: actions/checkout@v4
 
@@ -26,6 +22,7 @@ steps:
       python-version: '3.11'
 
   - name: Create and Start virtual environment and Install dependencies
+    working-directory: mcp-servers/logistics-mcp
     run: |
       python -m venv antenv
       source antenv/bin/activate
@@ -36,8 +33,7 @@ steps:
     uses: actions/upload-artifact@v4
     with:
       name: python-app
-      path: |
-        mcp-servers/logistics-mcp/*
+      path: mcp-servers/logistics-mcp
 
 deploy:
 runs-on: ubuntu-latest
