@@ -30,7 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Upload artifact for deployment jobs
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -45,7 +45,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: python-app
@@ -54,12 +54,11 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_A7C6F1D11A0F40248D51D34E3282FCD3 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D9FC87425DA74BC583A777655A369F9A }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_899214B6E32D4DA78BB75C4DDEA9E0F4 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_561982CD57C14F2BA824C334D9217228 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_72CC9067190844948EBDFC7A9321FF74 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5BD36945D36A410E9DF9D08F447397EE }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: abhi-logistics-mcp
