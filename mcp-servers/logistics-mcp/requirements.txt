@@ -1,6 +1,7 @@
-mcp
+mcp==1.28.0
 fastmcp
 httpx
 python-dotenv
 uvicorn
 fastapi
+gunicorn

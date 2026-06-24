@@ -16,28 +16,30 @@ service = LogisticsService()
 
 @mcp.tool()
 async def shipment_status_tool(shipment_code: str):
+    """
+    Get shipment status, driver and tracking details.
+    """
     return await service.shipment_status(shipment_code)
 
 
 @mcp.tool()
 async def delayed_shipments_alert_tool():
+    """
+    Send notifications for delayed shipments.
+    """
     return await service.delayed_shipments_alert()
 
 
 @mcp.tool()
 async def shipment_eta_tool(shipment_code: str):
+    """
+    Get shipment ETA using:
+    Database MCP + Maps MCP + Weather MCP
+    """
     return await service.shipment_eta(shipment_code)
 
 
-# IMPORTANT
-app = mcp.streamable_http_app()
-
-
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=8000
+    mcp.run(
+        transport="streamable-http"
     )
