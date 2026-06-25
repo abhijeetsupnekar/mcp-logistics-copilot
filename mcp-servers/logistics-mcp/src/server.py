@@ -9,7 +9,27 @@ from mcp.server.fastmcp import FastMCP
 from services.logistics_service import LogisticsService
 
 
-mcp = FastMCP("Logistics MCP")
+from mcp.server.fastmcp.server import TransportSecuritySettings
+
+mcp = FastMCP(
+    "Logistics MCP",
+    host="0.0.0.0",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=[
+            "127.0.0.1:*",
+            "localhost:*",
+            "[::1]:*",
+            "abhi-logistics-mcp-g8evfbgxbqdudfau.swedencentral-01.azurewebsites.net"
+        ],
+        allowed_origins=[
+            "http://127.0.0.1:*",
+            "http://localhost:*",
+            "http://[::1]:*",
+            "https://abhi-logistics-mcp-g8evfbgxbqdudfau.swedencentral-01.azurewebsites.net"
+        ]
+    )
+)
 
 service = LogisticsService()
 
