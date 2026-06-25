@@ -72,7 +72,17 @@ class LogisticsService:
                 shipment_code
             )
         )
+        print("========== SUMMARY RESULT ==========")
+        print(type(summary_result))
+        print(summary_result)
 
+        print("========== CONTENT ==========")
+        print(summary_result.content)
+
+        print("========== TEXT ==========")
+        print(type(summary_result.content[0].text))
+        print(repr(summary_result.content[0].text))
+        print("====================================")
         tracking_result = (
             await self.client.get_tracking(
                 shipment_code
