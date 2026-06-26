@@ -6,10 +6,10 @@ sys.path.append(
 )
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.server import TransportSecuritySettings
+
 from services.logistics_service import LogisticsService
 
-
-from mcp.server.fastmcp.server import TransportSecuritySettings
 
 mcp = FastMCP(
     "Logistics MCP",
@@ -35,28 +35,32 @@ service = LogisticsService()
 
 
 @mcp.tool()
-async def shipment_status_tool(shipment_code: str):
+async def shipment_status_tool(shipment_code: str) -> dict:
     """
-    Get shipment status, driver and tracking details.
+    Retrieve shipment status, assigned vehicle,
+    driver details, and tracking information.
     """
     return await service.shipment_status(shipment_code)
 
 
 @mcp.tool()
-async def delayed_shipments_alert_tool():
+async def shipment_eta_tool(shipment_code: str) -> dict:
     """
-    Send notifications for delayed shipments.
+    Calculate shipment ETA using:
+
+    - Database MCP
+    - Maps MCP
+    - Weather MCP
     """
-    return await service.delayed_shipments_alert()
+    return await service.shipment_eta(shipment_code)
 
 
 @mcp.tool()
-async def shipment_eta_tool(shipment_code: str):
+async def delayed_shipments_alert_tool() -> dict:
     """
-    Get shipment ETA using:
-    Database MCP + Maps MCP + Weather MCP
+    Detect delayed shipments and send notifications.
     """
-    return await service.shipment_eta(shipment_code)
+    return await service.delayed_shipments_alert()
 
 
 if __name__ == "__main__":

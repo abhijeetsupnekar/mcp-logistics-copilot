@@ -1,42 +1,40 @@
+import logging
 import os
 
 from dotenv import load_dotenv
-
-
-
-load_dotenv()
 from mcp import ClientSession
 from mcp.client.streamable_http import streamable_http_client
 
+load_dotenv()
 
-import json
+logger = logging.getLogger(__name__)
 
-
-def parse_result(result):
-
-    return json.loads(
-        result.content[0].text
-    )
 
 class LogisticsMCPClient:
+    """
+    Client responsible for communicating with all backend MCP servers.
+    """
 
     def __init__(self):
 
-        self.database_url = os.getenv(
-            "DATABASE_MCP_URL"
-        )
+        self.database_url = self._get_env("DATABASE_MCP_URL")
+        self.maps_url = self._get_env("MAPS_MCP_URL")
+        self.weather_url = self._get_env("WEATHER_MCP_URL")
+        self.notification_url = self._get_env("NOTIFICATION_MCP_URL")
 
-        self.maps_url = os.getenv(
-            "MAPS_MCP_URL"
-        )
+    @staticmethod
+    def _get_env(variable_name: str) -> str:
+        """
+        Read and validate environment variables.
+        """
+        value = os.getenv(variable_name)
 
-        self.weather_url = os.getenv(
-            "WEATHER_MCP_URL"
-        )
+        if not value:
+            raise ValueError(
+                f"Missing required environment variable: {variable_name}"
+            )
 
-        self.notification_url = os.getenv(
-            "NOTIFICATION_MCP_URL"
-        )
+        return value
 
     async def _call_tool(
         self,
@@ -44,37 +42,45 @@ class LogisticsMCPClient:
         tool_name: str,
         arguments: dict
     ):
+        """
+        Execute a tool on the specified MCP server.
+        """
 
-        async with streamable_http_client(
-            mcp_url
-        ) as (
-            read_stream,
-            write_stream,
-            _
-        ):
+        try:
 
-            async with ClientSession(
+            async with streamable_http_client(
+                mcp_url
+            ) as (
                 read_stream,
-                write_stream
-            ) as session:
+                write_stream,
+                _
+            ):
 
-                await session.initialize()
+                async with ClientSession(
+                    read_stream,
+                    write_stream
+                ) as session:
 
-                result = await session.call_tool(
-                    tool_name,
-                    arguments
-                )
+                    await session.initialize()
 
-                return result
+                    return await session.call_tool(
+                        tool_name,
+                        arguments
+                    )
+
+        except Exception:
+            logger.exception(
+                "Failed calling tool '%s' on MCP server '%s'",
+                tool_name,
+                mcp_url
+            )
+            raise
 
     # -------------------------
     # DATABASE MCP
     # -------------------------
 
-    async def get_shipment(
-        self,
-        shipment_code: str
-    ):
+    async def get_shipment(self, shipment_code: str):
 
         return await self._call_tool(
             self.database_url,
@@ -84,10 +90,7 @@ class LogisticsMCPClient:
             }
         )
 
-    async def get_tracking(
-        self,
-        shipment_code: str
-    ):
+    async def get_tracking(self, shipment_code: str):
 
         return await self._call_tool(
             self.database_url,
@@ -97,10 +100,7 @@ class LogisticsMCPClient:
             }
         )
 
-    async def get_shipment_summary(
-        self,
-        shipment_code: str
-    ):
+    async def get_shipment_summary(self, shipment_code: str):
 
         return await self._call_tool(
             self.database_url,
@@ -110,9 +110,7 @@ class LogisticsMCPClient:
             }
         )
 
-    async def get_delayed_shipments(
-        self
-    ):
+    async def get_delayed_shipments(self):
 
         return await self._call_tool(
             self.database_url,
@@ -158,10 +156,7 @@ class LogisticsMCPClient:
     # WEATHER MCP
     # -------------------------
 
-    async def current_weather(
-        self,
-        city: str
-    ):
+    async def current_weather(self, city: str):
 
         return await self._call_tool(
             self.weather_url,
@@ -171,10 +166,7 @@ class LogisticsMCPClient:
             }
         )
 
-    async def forecast_weather(
-        self,
-        city: str
-    ):
+    async def forecast_weather(self, city: str):
 
         return await self._call_tool(
             self.weather_url,
